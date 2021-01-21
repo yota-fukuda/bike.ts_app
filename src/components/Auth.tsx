@@ -8,9 +8,6 @@ import {
   Button,
   CssBaseline,
   TextField,
-  FormControlLabel,
-  Checkbox,
-  Link,
   Grid,
   Box,
   Typography,
@@ -145,21 +142,6 @@ const Auth: React.FC = () => {
         <form className={classes.form} noValidate>
           {!isLogin && (
             <>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
-                autoFocus
-                value={username}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setUserName(e.target.value);
-                }}
-              />
               <Box textAlign="center">
                 <IconButton>
                   <label>
@@ -179,6 +161,21 @@ const Auth: React.FC = () => {
                   </label>
                 </IconButton>
               </Box>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
+                autoFocus
+                value={username}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  setUserName(e.target.value);
+                }}
+              />
             </>
           )}
           <TextField
