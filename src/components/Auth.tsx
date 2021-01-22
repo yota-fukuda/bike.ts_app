@@ -99,6 +99,10 @@ const Auth: React.FC = () => {
     await auth.signInWithEmailAndPassword(email, password);
   };
 
+  const signInGoogle = async () => {
+    await auth.signInWithPopup(provider).catch((err) => alert(err.message));
+  };
+
   const signUpEmail = async () => {
     const authUser = await auth.createUserWithEmailAndPassword(email, password);
     let url = "";
@@ -110,6 +114,7 @@ const Auth: React.FC = () => {
         .map((n) => S[n % S.length])
         .join("");
       const fileName = randomChar + "_" + avatarImage.name;
+
       await storage.ref(`avatars/${fileName}`).put(avatarImage);
       url = await storage.ref("avatars").child(fileName).getDownloadURL();
     }
@@ -123,10 +128,6 @@ const Auth: React.FC = () => {
         photoUrl: url,
       })
     );
-  };
-
-  const signInGoogle = async () => {
-    await auth.signInWithPopup(provider).catch((err) => alert(err.message));
   };
 
   return (
