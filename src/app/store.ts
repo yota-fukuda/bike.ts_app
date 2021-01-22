@@ -14,3 +14,5 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action<string>
 >;
+
+export type AddDispatch = typeof store.dispatch;
