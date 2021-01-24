@@ -54,7 +54,7 @@ const Feed: React.FC = () => {
           ))}
         </>
       )}
-      <button onClick={() => auth.signOut()}>LogOut</button>
+      {/* <button onClick={() => auth.signOut()}>LogOut</button> */}
     </div>
   );
 };

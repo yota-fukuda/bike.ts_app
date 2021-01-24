@@ -8,6 +8,7 @@ import { Avatar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import MessageIcon from "@material-ui/icons/Message";
 import SendIcon from "@material-ui/icons/Send";
+import Divider from "@material-ui/core/Divider";
 
 interface PROPS {
   postId: string;
@@ -113,6 +114,7 @@ const Post: React.FC<PROPS> = (props) => {
           className={styles.post_tweetImage}
           onClick={() => setOpenComments(!openComments)}
         />
+
         {openComments && (
           <>
             {comments.map((com) => (
@@ -150,6 +152,7 @@ const Post: React.FC<PROPS> = (props) => {
             </form>
           </>
         )}
+        <Divider />
       </div>
     </div>
   );
