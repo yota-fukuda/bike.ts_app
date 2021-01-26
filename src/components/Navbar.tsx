@@ -15,7 +15,6 @@ import {
   // InputBase,
   Button,
 } from "@material-ui/core";
-import styles from "./Input.module.css";
 // import {SearchIcon,CreateIcon} from "@material-ui/icons";
 import Modal from "./Modal";
 import { auth } from "../firebase";

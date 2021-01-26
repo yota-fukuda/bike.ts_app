@@ -6,6 +6,7 @@ import { storage, db, auth } from "../firebase";
 import { Avatar, Button, IconButton } from "@material-ui/core";
 import firebase from "firebase/app";
 import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
+import Modal from "react-modal";
 
 const Input: React.FC = () => {
   const user = useSelector(selectUser);
@@ -93,6 +94,7 @@ const Input: React.FC = () => {
                 className={
                   postImage ? styles.tweet_addIconLoaded : styles.tweet_addIcon
                 }
+                color="primary"
               />
               <input
                 className={styles.tweet_hiddenIcon}

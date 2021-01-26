@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
+import styles from "./Input.module.css";
+import { useSelector } from "react-redux";
+import { selectUser } from "../features/userSlice";
+import { storage, db, auth } from "../firebase";
 import Modal from "react-modal";
-import { Button } from "@material-ui/core";
+// import Input from "./Input";
+import { Avatar, Button, IconButton } from "@material-ui/core";
 import CreateIcon from "@material-ui/icons/Create";
 import {
   createStyles,
@@ -8,12 +13,24 @@ import {
   makeStyles,
   Theme,
 } from "@material-ui/core/styles";
+import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
+import firebase from "firebase/app";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      height: "95%",
+      width: "90%",
+    },
     button: {
-      textTransform: "none",
-      color: "#fff",
+      // textTransform: 'none',
+      color: "#e0e0e0",
       position: "relative",
       marginRight: theme.spacing(2),
       borderRadius: theme.shape.borderRadius,
@@ -25,18 +42,67 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-  },
-};
+const Input: React.FC = () => {
+  const user = useSelector(selectUser);
+  const [postImage, setPostImage] = useState<File | null>(null);
+  const [postMsg, setPostMsg] = useState("");
+  const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files![0]) {
+      setPostImage(e.target.files![0]);
+      e.target.value = "";
+    }
+  };
 
-const Sample = () => {
+  // 投稿機能
+  const sendPost = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    //投稿写真がある場合
+    if (postImage) {
+      const S =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const N = 16;
+      const randomChar = Array.from(crypto.getRandomValues(new Uint32Array(N)))
+        .map((n) => S[n % S.length])
+        .join("");
+      const fileName = randomChar + "_" + postImage.name;
+      const uploadPostImg = storage.ref(`images/${fileName}`).put(postImage);
+      uploadPostImg.on(
+        firebase.storage.TaskEvent.STATE_CHANGED,
+
+        () => {},
+        (err) => {
+          alert(err.message);
+        },
+        async () => {
+          await storage
+            .ref("images")
+            .child(fileName)
+            .getDownloadURL()
+            .then(async (url) => {
+              await db.collection("posts").add({
+                avatar: user.photoUrl,
+                image: url,
+                text: postMsg,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                username: user.displayName,
+              });
+            });
+        }
+      );
+    } else {
+      //投稿写真がない場合
+      db.collection("posts").add({
+        avatar: user.photoUrl,
+        image: "",
+        text: postMsg,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        username: user.displayName,
+      });
+    }
+    setPostImage(null);
+    setPostMsg("");
+  };
+
   const classes = useStyles();
   //   var subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -61,10 +127,10 @@ const Sample = () => {
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        style={customStyles}
+        style={classes.content}
         contentLabel="Example Modal"
       >
-        <h2>Mebee</h2>
+        <h2>投稿</h2>
         <Button
           variant="outlined"
           color="primary"
@@ -73,10 +139,57 @@ const Sample = () => {
         >
           close
         </Button>
-        <div>テキストテキスト</div>
+
+        <form onSubmit={sendPost}>
+          <div className={styles.tweet_form}>
+            <Avatar
+              className={styles.tweet_avatar}
+              src={user.photoUrl}
+              onClick={async () => {
+                await auth.signOut();
+              }}
+            />
+            <input
+              className={styles.tweet_input}
+              placeholder="入力してください。"
+              type="text"
+              autoFocus
+              value={postMsg}
+              onChange={(e) => setPostMsg(e.target.value)}
+            />
+            <IconButton>
+              <label>
+                <AddAPhotoIcon
+                  className={
+                    postImage
+                      ? styles.tweet_addIconLoaded
+                      : styles.tweet_addIcon
+                  }
+                  color="primary"
+                />
+                <input
+                  className={styles.tweet_hiddenIcon}
+                  type="file"
+                  onChange={onChangeImageHandler}
+                />
+              </label>
+            </IconButton>
+          </div>
+          <div onClick={closeModal}>
+            <Button
+              type="submit"
+              disabled={!postMsg}
+              className={
+                postMsg ? styles.tweet_sendBtn : styles.tweet_sendDisableBtn
+              }
+            >
+              投稿
+            </Button>
+          </div>
+        </form>
       </Modal>
     </div>
   );
 };
 
-export default Sample;
+export default Input;
