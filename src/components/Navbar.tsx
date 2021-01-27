@@ -13,10 +13,10 @@ import {
   Menu,
   MenuItem,
   // InputBase,
-  Button,
+  //   Button,
 } from "@material-ui/core";
 // import {SearchIcon,CreateIcon} from "@material-ui/icons";
-import Modal from "./Modal";
+import Input from "./Input";
 import { auth } from "../firebase";
 import { useSelector } from "react-redux";
 import { selectUser } from "../features/userSlice";
@@ -149,7 +149,7 @@ const Navbar: React.FC = () => {
             </Menu>
           </div>
 
-          <Modal />
+          <Input />
         </Toolbar>
       </AppBar>
     </div>

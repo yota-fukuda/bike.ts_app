@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { db, auth } from "../firebase";
-import Input from "./Input";
+import { db } from "../firebase";
 import styles from "./Feed.module.css";
 import Post from "./Post";
 
@@ -38,7 +37,6 @@ const Feed: React.FC = () => {
 
   return (
     <div className={styles.feed}>
-      <Input />
       {posts[0]?.id && (
         <>
           {posts.map((post) => (

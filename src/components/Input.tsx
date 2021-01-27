@@ -2,11 +2,49 @@ import React, { useState } from "react";
 import styles from "./Input.module.css";
 import { useSelector } from "react-redux";
 import { selectUser } from "../features/userSlice";
-import { storage, db, auth } from "../firebase";
-import { Avatar, Button, IconButton } from "@material-ui/core";
-import firebase from "firebase/app";
-import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
+import { storage, db } from "../firebase";
 import Modal from "react-modal";
+// import Input from "./Input";
+import { Button, IconButton } from "@material-ui/core";
+import CreateIcon from "@material-ui/icons/Create";
+import {
+  createStyles,
+  fade,
+  makeStyles,
+  Theme,
+} from "@material-ui/core/styles";
+import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
+import firebase from "firebase/app";
+import CloseIcon from "@material-ui/icons/Close";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      height: "95%",
+      width: "90%",
+    },
+    button: {
+      // textTransform: 'none',
+      color: "#e0e0e0",
+      position: "relative",
+      marginRight: theme.spacing(2),
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: fade(theme.palette.common.white, 0.15),
+      "&:hover": {
+        backgroundColor: fade(theme.palette.common.white, 0.25),
+      },
+    },
+    close: {
+      cursor: "pointer",
+    },
+  })
+);
 
 const Input: React.FC = () => {
   const user = useSelector(selectUser);
@@ -69,52 +107,81 @@ const Input: React.FC = () => {
     setPostMsg("");
   };
 
+  const classes = useStyles();
+  //   var subtitle;
+  const [modalIsOpen, setIsOpen] = React.useState(false);
+  const openModal = () => {
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+  };
   return (
-    <>
-      <form onSubmit={sendPost}>
-        <div className={styles.tweet_form}>
-          <Avatar
-            className={styles.tweet_avatar}
-            src={user.photoUrl}
-            onClick={async () => {
-              await auth.signOut();
-            }}
-          />
-          <input
-            className={styles.tweet_input}
-            placeholder="入力してください。"
-            type="text"
-            autoFocus
-            value={postMsg}
-            onChange={(e) => setPostMsg(e.target.value)}
-          />
-          <IconButton>
-            <label>
-              <AddAPhotoIcon
-                className={
-                  postImage ? styles.tweet_addIconLoaded : styles.tweet_addIcon
-                }
-                color="primary"
-              />
-              <input
-                className={styles.tweet_hiddenIcon}
-                type="file"
-                onChange={onChangeImageHandler}
-              />
-            </label>
-          </IconButton>
-        </div>
-        <Button
-          type="submit"
-          disabled={!postMsg}
-          className={
-            postMsg ? styles.tweet_sendBtn : styles.tweet_sendDisableBtn
-          }
-        >
-          投稿
-        </Button>
-      </form>
-    </>
+    <div>
+      <Button
+        variant="outlined"
+        color="primary"
+        className={classes.button}
+        onClick={openModal}
+      >
+        <CreateIcon />
+        投稿
+      </Button>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={classes.content}
+        contentLabel="Example Modal"
+      >
+        <CloseIcon onClick={closeModal} className={classes.close} />
+        <form onSubmit={sendPost}>
+          <div className={styles.tweet_form}>
+            {/* <Avatar
+              className={styles.tweet_avatar}
+              src={user.photoUrl}
+              onClick={async () => {
+                await auth.signOut();
+              }}
+            /> */}
+            <textarea
+              className={styles.tweet_input}
+              placeholder="入力してください。"
+              // type="text"
+              // autoFocus
+              value={postMsg}
+              onChange={(e) => setPostMsg(e.target.value)}
+            />
+            <IconButton>
+              <label>
+                <AddAPhotoIcon
+                  className={
+                    postImage
+                      ? styles.tweet_addIconLoaded
+                      : styles.tweet_addIcon
+                  }
+                  color="primary"
+                />
+                <input
+                  className={styles.tweet_hiddenIcon}
+                  type="file"
+                  onChange={onChangeImageHandler}
+                />
+              </label>
+            </IconButton>
+          </div>
+          <Button
+            type="submit"
+            disabled={!postMsg}
+            className={
+              postMsg ? styles.tweet_sendBtn : styles.tweet_sendDisableBtn
+            }
+          >
+            投稿
+          </Button>
+        </form>
+      </Modal>
+    </div>
   );
 };
 
