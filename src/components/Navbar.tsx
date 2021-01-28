@@ -87,7 +87,7 @@ const useStyles = makeStyles((theme: Theme) =>
     //   },
     // },
     button: {
-      // textTransform: 'none',
+      textTransform: "none",
       color: "#fff",
       position: "relative",
       marginRight: theme.spacing(2),

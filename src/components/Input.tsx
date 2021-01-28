@@ -16,6 +16,7 @@ import {
 import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
 import firebase from "firebase/app";
 import CloseIcon from "@material-ui/icons/Close";
+// import PostImage from "./PostImage";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -170,6 +171,7 @@ const Input: React.FC = () => {
               </label>
             </IconButton>
           </div>
+          {/* <PostImage /> */}
           <Button
             type="submit"
             disabled={!postMsg}
