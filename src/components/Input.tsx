@@ -16,7 +16,6 @@ import {
 import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
 import firebase from "firebase/app";
 import CloseIcon from "@material-ui/icons/Close";
-// import PostImage from "./PostImage";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "90%",
     },
     button: {
-      // textTransform: 'none',
+      textTransform: "none",
       color: "#e0e0e0",
       position: "relative",
       marginRight: theme.spacing(2),
@@ -44,6 +43,10 @@ const useStyles = makeStyles((theme: Theme) =>
     close: {
       cursor: "pointer",
     },
+    image: {
+      height: "300px",
+      width: "400px",
+    },
   })
 );
 
@@ -52,10 +55,24 @@ const Input: React.FC = () => {
   const [postImage, setPostImage] = useState<File | null>(null);
   const [postMsg, setPostMsg] = useState("");
   const onChangeImageHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files![0]) {
-      setPostImage(e.target.files![0]);
-      e.target.value = "";
+    // if (e.target.files![0]) {
+    //   setPostImage(e.target.files![0]);
+    //   e.target.value = "";
+    // }
+    if (e.target.files === null) {
+      return;
     }
+    const file = e.target.files[0];
+    if (file === null) {
+      return;
+    }
+    let imgTag = document.getElementById("preview") as HTMLImageElement;
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const result: string = reader.result as string;
+      imgTag.src = result;
+    };
   };
 
   // 投稿機能
@@ -138,21 +155,6 @@ const Input: React.FC = () => {
         <CloseIcon onClick={closeModal} className={classes.close} />
         <form onSubmit={sendPost}>
           <div className={styles.tweet_form}>
-            {/* <Avatar
-              className={styles.tweet_avatar}
-              src={user.photoUrl}
-              onClick={async () => {
-                await auth.signOut();
-              }}
-            /> */}
-            <textarea
-              className={styles.tweet_input}
-              placeholder="入力してください。"
-              // type="text"
-              // autoFocus
-              value={postMsg}
-              onChange={(e) => setPostMsg(e.target.value)}
-            />
             <IconButton>
               <label>
                 <AddAPhotoIcon
@@ -166,12 +168,21 @@ const Input: React.FC = () => {
                 <input
                   className={styles.tweet_hiddenIcon}
                   type="file"
+                  accept="image/png, image/jpeg, image/gif"
                   onChange={onChangeImageHandler}
                 />
+                <img id="preview" src="null" className={classes.image} />
               </label>
             </IconButton>
+            <textarea
+              className={styles.tweet_input}
+              placeholder="入力してください。"
+              // type="text"
+              // autoFocus
+              value={postMsg}
+              onChange={(e) => setPostMsg(e.target.value)}
+            />
           </div>
-          {/* <PostImage /> */}
           <Button
             type="submit"
             disabled={!postMsg}
