@@ -1,7 +1,7 @@
 .tweet_form {
   margin: 40px;
   position: relative;
-  display: flex;
+  /* display: flex; */
 }
 .tweet_avatar {
   cursor: pointer;
